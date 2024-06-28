@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body onload="openWebsites()">
+
+<h2>Loads Chat GPT, Gemini and Claude</h2>
+
+<p>This webpage will open other websites automatically when it is loaded and then close itself after 5 seconds.</p>
+
+<script>
+function openWebsites() {
+  window.open('https://chat.openai.com/c/9edfffe9-d9d2-4dec-9e6b-962e040ccf8c', '_blank');
+  window.open('https://gemini.google.com/app', '_blank');
+  window.open('https://claude.ai/chat/4be48640-cace-4708-bade-c0ce9150a05e', '_blank');
+
+  // Close the webpage after 5 seconds
+  setTimeout(function() {
+    window.close();
+  }, 5000);
+}
+</script>
+
+</body>
+</html>
