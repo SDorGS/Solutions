@@ -1,5 +1,5 @@
 @echo off
-setlocal
+setlocal enabledelayedexpansion
 
 :: Prompt user to input the ASM file name or path
 echo Please enter the full path of the ASM file (including extension) or just the filename:
@@ -69,9 +69,28 @@ if /i not "%cd%\%asm_name%.obj"=="%asm_directory%%asm_name%.obj" (
     echo Object file is already in the target directory. Skipping copy.
 )
 
+:: Prompt user for custom libraries (optional)
+set lib_files=
+echo Enter custom library files to link (separate multiple with spaces, press Enter to skip):
+set /p lib_files=
+
+:: Normalize library files: Add .lib extension if missing and handle paths
+set processed_libs=
+for %%L in (%lib_files%) do (
+    if "%%~xL"==".lib" (
+        set processed_libs=!processed_libs! "%%L"
+    ) else (
+        if exist "%asm_directory%%%L.lib" (
+            set processed_libs=!processed_libs! "%asm_directory%%%L.lib"
+        ) else (
+            set processed_libs=!processed_libs! "%%L.lib"
+        )
+    )
+)
+
 :: Link the object file into an executable
 echo Linking the object file into an executable...
-link /subsystem:console "%asm_directory%%asm_name%.obj" /LIBPATH:%LIB_DIR% /OUT:"%asm_directory%%asm_name%.exe"
+link /subsystem:console "%asm_directory%%asm_name%.obj" /LIBPATH:%LIB_DIR% !processed_libs! /OUT:"%asm_directory%%asm_name%.exe"
 if %errorlevel% neq 0 (
     echo [ERROR] Error linking the object file. Exiting.
     exit /b
